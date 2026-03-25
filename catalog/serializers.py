@@ -9,6 +9,12 @@ from .models import AdditionalOption, Product, ProductColorOption
 
 class FlexibleListField(serializers.ListField):
     def to_internal_value(self, data):
+        if isinstance(data, list) and len(data) == 1 and isinstance(data[0], str):
+            single_value = data[0].strip()
+            if not single_value:
+                data = []
+            elif single_value.startswith('['):
+                data = json.loads(single_value)
         if isinstance(data, str):
             data = data.strip()
             if not data:
