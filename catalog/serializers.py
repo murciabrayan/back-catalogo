@@ -54,6 +54,7 @@ class PublicProductSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'category',
             'description',
             'includes',
             'price',
@@ -94,6 +95,7 @@ class AdminProductSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'category',
             'description',
             'includes',
             'price',

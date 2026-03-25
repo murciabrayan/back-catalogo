@@ -29,6 +29,10 @@ class AdditionalOption(TimestampedModel):
 
 
 class Product(TimestampedModel):
+    class Category(models.TextChoices):
+        LIMPIAPIPAS = 'limpiapipas', 'Limpiapipas'
+        DETAILS = 'details', 'Detalles'
+
     class Accent(models.TextChoices):
         LILA = 'lila', 'Lila'
         GOLD = 'gold', 'Dorado'
@@ -38,6 +42,11 @@ class Product(TimestampedModel):
         MINT = 'mint', 'Menta'
 
     name = models.CharField(max_length=180)
+    category = models.CharField(
+        max_length=20,
+        choices=Category.choices,
+        default=Category.LIMPIAPIPAS,
+    )
     description = models.TextField(blank=True)
     includes = models.TextField(blank=True)
     price = models.PositiveIntegerField()

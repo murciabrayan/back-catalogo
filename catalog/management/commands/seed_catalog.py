@@ -19,6 +19,7 @@ class Command(BaseCommand):
         for product_item in DEFAULT_PRODUCTS:
             colors = product_item['colors']
             defaults = {key: value for key, value in product_item.items() if key != 'colors'}
+            defaults.setdefault('category', 'limpiapipas')
             product, _ = Product.objects.update_or_create(
                 name=product_item['name'],
                 defaults=defaults,

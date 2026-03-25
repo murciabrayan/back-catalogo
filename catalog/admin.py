@@ -18,8 +18,8 @@ class AdditionalOptionAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'accent', 'is_active', 'display_order')
-    list_filter = ('accent', 'is_active')
+    list_display = ('name', 'category', 'price', 'accent', 'is_active', 'display_order')
+    list_filter = ('category', 'accent', 'is_active')
     search_fields = ('name', 'description', 'includes')
     ordering = ('display_order', 'name')
     filter_horizontal = ('additional_options',)
