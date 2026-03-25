@@ -1,3 +1,4 @@
+import base64
 import json
 
 from django.contrib.auth import authenticate
@@ -68,6 +69,8 @@ class PublicProductSerializer(serializers.ModelSerializer):
         return [option.name for option in obj.color_options.all()]
 
     def get_image_url(self, obj):
+        if obj.image_data_url:
+            return obj.image_data_url
         request = self.context.get('request')
         if obj.image:
             url = obj.image.url
@@ -111,6 +114,8 @@ class AdminProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_image_url(self, obj):
+        if obj.image_data_url:
+            return obj.image_data_url
         request = self.context.get('request')
         if obj.image:
             url = obj.image.url
@@ -118,8 +123,11 @@ class AdminProductSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
+        image_file = validated_data.get('image')
         color_option_names = validated_data.pop('color_option_names', [])
         additional_option_ids = validated_data.pop('additional_option_ids', [])
+        if image_file:
+            validated_data['image_data_url'] = self._file_to_data_url(image_file)
         product = Product.objects.create(**validated_data)
         if additional_option_ids:
             product.additional_options.set(
@@ -129,8 +137,11 @@ class AdminProductSerializer(serializers.ModelSerializer):
         return product
 
     def update(self, instance, validated_data):
+        image_file = validated_data.get('image')
         color_option_names = validated_data.pop('color_option_names', None)
         additional_option_ids = validated_data.pop('additional_option_ids', None)
+        if image_file:
+            validated_data['image_data_url'] = self._file_to_data_url(image_file)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -155,6 +166,13 @@ class AdminProductSerializer(serializers.ModelSerializer):
                 for index, name in enumerate(cleaned_names)
             ]
         )
+
+    def _file_to_data_url(self, uploaded_file):
+        uploaded_file.seek(0)
+        encoded = base64.b64encode(uploaded_file.read()).decode('ascii')
+        content_type = getattr(uploaded_file, 'content_type', None) or 'application/octet-stream'
+        uploaded_file.seek(0)
+        return f'data:{content_type};base64,{encoded}'
 
 
 class AdminLoginSerializer(TokenObtainPairSerializer):

@@ -52,6 +52,7 @@ class Product(TimestampedModel):
     price = models.PositiveIntegerField()
     accent = models.CharField(max_length=20, choices=Accent.choices, default=Accent.LILA)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
+    image_data_url = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveIntegerField(default=0)
     additional_options = models.ManyToManyField(
